@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rescue/dbhelper/mongodb.dart';
 import 'package:rescue/login.dart';
+import 'package:rescue/logoscreen.dart';
 import 'package:rescue/screen/form_screen.dart';
 import 'package:rescue/screen/homescreen.dart';
 
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      home: logo_Screen(),
     );
   }
 }

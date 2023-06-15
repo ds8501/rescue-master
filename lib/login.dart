@@ -8,9 +8,6 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-final Color facebookColor = const Color(0xff39579A);
-final Color googleColor = const Color(0xffDF4A32);
-
 class _LoginPageState extends State<LoginPage> {
   String _email = '';
   String _password = '';
@@ -24,129 +21,100 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Login Page'),
-      ),
-      body: Container(
-        color: Color.fromARGB(13, 198, 193, 193),
-        padding: EdgeInsets.fromLTRB(12, 2, 12, 50),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 5,
-            ),
-            CircleAvatar(
-              backgroundImage: AssetImage('assest/login.jpeg'),
-              radius: 120,
-              backgroundColor: Color.fromARGB(13, 198, 193, 193),
-            ),
-            SizedBox(height: 30),
-            TextFormField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Email',
+      // appBar: AppBar(
+      //   title: Text('Login Page'),
+      // ),
+      body: SingleChildScrollView(
+        child: Container(
+          color: Color.fromARGB(255, 2, 39, 72),
+          padding: EdgeInsets.fromLTRB(5,100, 5, 0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                backgroundImage: AssetImage('assest/login.png'),
+                radius: 100,
+                // backgroundColor: Color.fromARGB(13, 198, 193, 193),
               ),
-              onChanged: (value) {
-                setState(() {
-                  _email = value;
-                });
-              },
-            ),
-            SizedBox(height: 20),
-            TextFormField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Password',
+      
+      
+              // Text(
+              //   "Login",
+              //   style: TextStyle(color: Colors.white, fontSize: 35),
+              // ),
+              // Text(
+              //   "Please sign in to continue",
+              //   style: TextStyle(color: Colors.white, fontSize: 15),
+              // ),
+              SizedBox(height: MediaQuery.of(context).size.height*0.12),
+      
+              TextFormField(
+                decoration: InputDecoration(
+                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                   hintText: 'Email',
+                   hintStyle: TextStyle(color: Colors.white,fontStyle: FontStyle.italic),
+                  prefixIcon: Icon(Icons.email_outlined,color: Colors.white),
+                ),
+                
+                onChanged: (value) {
+                  setState(() {
+                    _email = value;
+                  });
+                },
+                 style: TextStyle(color: Colors.white),
               ),
-              obscureText: true,
-              onChanged: (value) {
-                setState(() {
-                  _password = value;
-                });
-              },
-            ),
-            SizedBox(height: 15),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomePage()),
-                );
-              },
-              child: const Text('Login'),
-            ),
-            TextButton(onPressed: () {}, child: Text("Sign Up?")),
-            Row(
-              children: [
-                SizedBox(
-                  width: 90,
+              SizedBox(height: 20),
+      
+              TextFormField(
+                decoration: InputDecoration(
+      
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                  hintText: 'Password',
+                   hintStyle: TextStyle(color: Colors.white,fontStyle: FontStyle.italic),
+                  prefixIcon: Icon(Icons.password_sharp,color: Colors.white,),
+                  
                 ),
-                CustomWidgets.socialButtonCircle(
-                    googleColor, FontAwesomeIcons.googlePlusG,
-                    iconColor: Colors.white, onTap: () {}),
-                SizedBox(
-                  width: 30,
+                obscureText: true,
+                onChanged: (value) {
+                  setState(() {
+                    _password = value;
+                  });
+                },
+                style: TextStyle(color: Colors.white),
+              ),
+               SizedBox(height: MediaQuery.of(context).size.height*0.09),
+              
+              SizedBox(
+                width: 120,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HomePage()),
+                    );
+                  },
+                  
+                  child: const Text('Login',style: TextStyle(fontSize: 20),),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
+                  ),
+                
                 ),
-                CustomWidgets.socialButtonCircle(
-                    facebookColor, FontAwesomeIcons.facebookF,
-                    iconColor: Colors.white, onTap: () {}),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class CustomWidgets {
-  static Widget socialButtonRect(title, color, icon, {Function? onTap}) {
-    return InkWell(
-      onTap: () {
-        onTap!();
-      },
-      child: Container(
-        height: 50,
-        margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-        decoration: BoxDecoration(
-            color: color, borderRadius: BorderRadius.all(Radius.circular(10))),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              icon,
-              color: Colors.white,
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 20),
-              child: Text(title,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  static Widget socialButtonCircle(color, icon, {iconColor, Function? onTap}) {
-    return InkWell(
-      onTap: () {
-        onTap!();
-      },
-      child: Container(
-          padding: const EdgeInsets.all(20.0),
-          decoration: new BoxDecoration(
-            shape: BoxShape.circle,
-            color: color,
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height*0.12),
+              Row(  mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Don't have account?",style: TextStyle(color: Colors.white),),
+                  TextButton(onPressed: () {}, child: Text("Sign Up?")),
+                ],
+              ),
+            ],
           ),
-          child: Icon(
-            icon,
-            color: iconColor,
-          )), //
+        ),
+      ),
     );
   }
 }
+

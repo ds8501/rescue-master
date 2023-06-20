@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:rescue/screen/homescreen.dart';
 
-import '../Dbmodel.dart';
-import '../dbhelper/mongodb.dart';
-
 class FormScreen extends StatefulWidget {
   const FormScreen(
       {Key? key,
       required this.id,
-      required this.personalid,
+      // required this.personalid,
       required this.lname,
       required this.fname,
       required this.location,
@@ -16,7 +13,7 @@ class FormScreen extends StatefulWidget {
       required this.imageurl})
       : super(key: key);
   final String id;
-  final String personalid;
+//  final String personalid;
   final String fname;
   final String lname;
   final String imageurl;
@@ -138,7 +135,7 @@ class _FormScreenState extends State<FormScreen> {
       padding: EdgeInsets.only(bottom: 25),
       child: TextField(
         onSubmitted: (text) {
-          MongoDatabase.setData(widget.id, attribute, text);
+          //MongoDatabase.setData(widget.id, attribute, text);
         },
         decoration: InputDecoration(
           contentPadding: EdgeInsets.only(bottom: 5),

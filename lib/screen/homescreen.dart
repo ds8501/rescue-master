@@ -1,10 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:rescue/dbhelper/mongodb.dart';
-
-import '../Dbmodel.dart';
+import 'package:http/http.dart' as http;
+import 'package:rescue/apiModel.dart';
 import 'form_screen.dart';
+import 'dart:convert';
+
+String? stringResponse;
+Map? mapresponse;
+List? listresponse;
+ApiCall? datamodel;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -14,6 +18,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Future apicall() async {
+    http.Response response;
+    response =
+        await http.get(Uri.parse('http://54.211.10.76:8000/victims/victims/'));
+    if (response.statusCode == 200) {
+      setState(() {
+        stringResponse = response.body;
+        mapresponse = jsonDecode(response.body);
+        //listresponse = mapresponse?['data'];
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    apicall();
+    super.initState();
+  }
+
   int ind = 0;
   @override
   Widget build(BuildContext context) {
@@ -50,41 +73,39 @@ class _HomePageState extends State<HomePage> {
             )
           ],
         ),
-        body: SafeArea(
-            child: FutureBuilder(
-                future: MongoDatabase.getData(),
-                builder: (context, AsyncSnapshot snapshot) {
-                  print("DATA");
+        body: SafeArea(child: FutureBuilder(
+            // future: MongoDatabase.getData(),
+            builder: (context, AsyncSnapshot snapshot) {
+          print("DATA");
 
-                  print(snapshot.data.toString());
-                  print("DATA ENDS HERE");
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else {
-                    if (snapshot.hasData) {
-                      var totalData = snapshot.data.length;
-                      return ListView.builder(
-                          itemCount: totalData,
-                          itemBuilder: (BuildContext context, int index) {
-                            MongoDbModel dataHere =
-                                MongoDbModel.fromJson(snapshot.data[index]);
-                            //if (dataHere.assignedStatus == true) {
-                            return displayCard(dataHere);
-                            // }
-                          });
-                    } else {
-                      return Center(
-                        child: Text("No data"),
-                      );
-                    }
-                  }
-                })));
+          print(snapshot.data.toString());
+          print("DATA ENDS HERE");
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            if (snapshot.hasData) {
+              var totalData = snapshot.data.length;
+              return ListView.builder(
+                  itemCount: totalData,
+                  itemBuilder: (BuildContext context, int index) {
+                    ApiCall dataHere = listresponse as ApiCall;
+                    //if (dataHere.assignedStatus == true) {
+                    return displayCard(dataHere);
+                    // }
+                  });
+            } else {
+              return Center(
+                child: Text("No data"),
+              );
+            }
+          }
+        })));
   }
 
-  Widget displayCard(MongoDbModel data) {
-    if (data.assignedStatus == true) {
+  Widget displayCard(ApiCall data) {
+    if (data.ngoAssigned == true) {
       return Container(
         height: 120,
         child: Card(
@@ -95,9 +116,9 @@ class _HomePageState extends State<HomePage> {
                   width: 15,
                 ),
                 CircleAvatar(
-                  foregroundImage: (data.imageurl != null)
-                      ? NetworkImage(data.imageurl)
-                      : null,
+                  // ignore: unnecessary_null_comparison
+                  foregroundImage:
+                      (data.image != null) ? NetworkImage(data.image) : null,
                   backgroundColor: Colors.yellow,
                   radius: 25,
                   child: Icon(
@@ -121,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                           width: 4,
                         ),
                         Text(
-                          "${data.fname + data.lname}",
+                          "${data.firstName + data.lastName}",
                           style: TextStyle(fontSize: 20, color: Colors.white),
                         ),
                       ],
@@ -141,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                           width: 2,
                         ),
                         Text(
-                          "${data.location}",
+                          "${data.pickupLocation}",
                           style: TextStyle(fontSize: 17, color: Colors.white),
                         ),
                       ],
@@ -177,12 +198,12 @@ class _HomePageState extends State<HomePage> {
                           context,
                           MaterialPageRoute(
                             builder: (contex) => FormScreen(
-                                id: data.id.toHexString(),
-                                personalid: data.personalid,
-                                lname: data.lname,
-                                fname: data.fname,
-                                location: data.location,
-                                imageurl: data.imageurl,
+                                id: data.id,
+                                // personalid: data.personalid,
+                                lname: data.lastName,
+                                fname: data.firstName,
+                                location: data.pickupLocation,
+                                imageurl: data.image,
                                 description: data.description),
                           ),
                         );
@@ -193,8 +214,8 @@ class _HomePageState extends State<HomePage> {
                       style:
                           ElevatedButton.styleFrom(backgroundColor: Colors.red),
                       onPressed: () {
-                        MongoDatabase.unassignProfile(data.id.toHexString());
-                        setState(() {});
+                        // MongoDatabase.unassignProfile(data.id);
+                        // setState(() {});
                       },
                       child: Icon(Icons.close),
                     )

@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:rescue/dbhelper/mongodb.dart';
-import 'package:rescue/login.dart';
+
 import 'package:rescue/logoscreen.dart';
-import 'package:rescue/screen/form_screen.dart';
-import 'package:rescue/screen/homescreen.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await MongoDatabase.connect();
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await MongoDatabase.connect();
   runApp(const MyApp());
 }
 

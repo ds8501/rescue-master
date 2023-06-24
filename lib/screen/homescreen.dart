@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:http/http.dart' as http;
 import 'package:rescue/apiModel.dart';
+import '../modelhelper.dart';
 import 'form_screen.dart';
-import 'dart:convert';
-
-String? stringResponse;
-Map? mapresponse;
-List? listresponse;
-ApiCall? datamodel;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -18,26 +12,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Future apicall() async {
-    http.Response response;
-    response =
-        await http.get(Uri.parse('http://54.211.10.76:8000/victims/victims/'));
-    if (response.statusCode == 200) {
-      setState(() {
-        stringResponse = response.body;
-        mapresponse = jsonDecode(response.body);
-        //listresponse = mapresponse?['data'];
-      });
-    }
-  }
+  List<ApiCall>? data;
+  var isLoaded = false;
 
   @override
   void initState() {
-    apicall();
     super.initState();
+    getData();
   }
 
-  int ind = 0;
+  getData() async {
+    // print('calling function');
+    List<ApiCall>? responseData = await baseclient().get();
+    print('hello');
+    if (responseData != null) {
+      setState(() {
+        data = responseData;
+        print('HIIIIII');
+        isLoaded = true;
+      });
+    } else {
+      print('hiiiiiiii');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,273 +71,147 @@ class _HomePageState extends State<HomePage> {
             )
           ],
         ),
-        body: SafeArea(child: FutureBuilder(
-            // future: MongoDatabase.getData(),
-            builder: (context, AsyncSnapshot snapshot) {
-          print("DATA");
-
-          print(snapshot.data.toString());
-          print("DATA ENDS HERE");
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            if (snapshot.hasData) {
-              var totalData = snapshot.data.length;
-              return ListView.builder(
-                  itemCount: totalData,
-                  itemBuilder: (BuildContext context, int index) {
-                    ApiCall dataHere = listresponse as ApiCall;
-                    //if (dataHere.assignedStatus == true) {
-                    return displayCard(dataHere);
-                    // }
-                  });
-            } else {
-              return Center(
-                child: Text("No data"),
-              );
-            }
-          }
-        })));
+        body: Visibility(
+          visible: isLoaded,
+          // ignore: sort_child_properties_last
+          child: ListView.builder(
+              itemCount: data?.length,
+              itemBuilder: (BuildContext context, int index) {
+                Text(data![index].firstName);
+                const Text('hello world');
+                return displayCard(data![index]);
+                //}
+              }),
+          replacement: const Center(
+            child: Text('no data byee byee'),
+          ),
+        ));
   }
 
   Widget displayCard(ApiCall data) {
-    if (data.ngoAssigned == true) {
-      return Container(
-        height: 120,
-        child: Card(
-            color: Color.fromARGB(255, 35, 36, 37),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 15,
+    // if (data.ngoAssigned == true) {
+    return Container(
+      height: 120,
+      child: Card(
+          color: Color.fromARGB(255, 35, 36, 37),
+          child: Row(
+            children: [
+              const SizedBox(
+                width: 15,
+              ),
+              CircleAvatar(
+                // ignore: unnecessary_null_comparison
+                foregroundImage:
+                    // ignore: unnecessary_null_comparison
+                    (data.image != null) ? NetworkImage(data.image) : null,
+                backgroundColor: Colors.yellow,
+                radius: 25,
+                child: const Icon(
+                  Icons.person,
+                  color: Colors.black,
                 ),
-                CircleAvatar(
-                  // ignore: unnecessary_null_comparison
-                  foregroundImage:
-                      (data.image != null) ? NetworkImage(data.image) : null,
-                  backgroundColor: Colors.yellow,
-                  radius: 25,
-                  child: Icon(
-                    Icons.person,
-                    color: Colors.black,
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 10,
                   ),
-                ),
-                SizedBox(
-                  width: 5,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 4,
-                        ),
-                        Text(
-                          "${data.firstName + data.lastName}",
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Icon(
-                          Ionicons.location,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                        SizedBox(
-                          width: 2,
-                        ),
-                        Text(
-                          "${data.pickupLocation}",
-                          style: TextStyle(fontSize: 17, color: Colors.white),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 4,
-                        ),
-                        Text(
-                          "${data.description}",
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Spacer(),
-                Column(
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 4,
                       ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (contex) => FormScreen(
-                                id: data.id,
-                                // personalid: data.personalid,
-                                lname: data.lastName,
-                                fname: data.firstName,
-                                location: data.pickupLocation,
-                                imageurl: data.image,
-                                description: data.description),
-                          ),
-                        );
-                      },
-                      child: Icon(Icons.check),
+                      Text(
+                        "${data.firstName + data.lastName}",
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Icon(
+                        Ionicons.location,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      Text(
+                        "${data.pickupLocation}",
+                        style: TextStyle(fontSize: 17, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 4,
+                      ),
+                      Text(
+                        "${data.description}",
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Spacer(),
+              Column(
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
                     ),
-                    ElevatedButton(
-                      style:
-                          ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                      onPressed: () {
-                        // MongoDatabase.unassignProfile(data.id);
-                        // setState(() {});
-                      },
-                      child: Icon(Icons.close),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  width: 10,
-                )
-              ],
-            )),
-      );
-    }
-    return SizedBox(
-      height: 1,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (contex) => FormScreen(
+                              id: data.id,
+                              // personalid: data.personalid,
+                              lname: data.lastName,
+                              fname: data.firstName,
+                              location: data.pickupLocation,
+                              imageurl: data.image,
+                              description: data.description),
+                        ),
+                      );
+                    },
+                    child: Icon(Icons.check),
+                  ),
+                  ElevatedButton(
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    onPressed: () {
+                      // MongoDatabase.unassignProfile(data.id);
+                      // setState(() {});
+                    },
+                    child: Icon(Icons.close),
+                  )
+                ],
+              ),
+              SizedBox(
+                width: 10,
+              )
+            ],
+          )),
     );
+    // }
   }
 }
-
-// IconButton(
-// onPressed: () {
-// // print(data.id);
-// // print(data.description);
-// // print(data.location);
-// // print(data.fname);
-// // print(data.lname);
-// // print(data.personalid);
-// // print(data.imageurl);
-//
-// Navigator.push(
-// context,
-// MaterialPageRoute(
-// builder: (contex) => FormScreen(
-// id: data.id.toHexString(),
-// personalid: data.personalid,
-// lname: data.lname,
-// fname: data.fname,
-// location: data.location,
-// imageurl: data.imageurl,
-// description: data.description)));
-// },
-// icon: Icon(
-// CupertinoIcons.right_chevron,
-// color: Colors.white,
-// ),
-// ),
-//
-// ListTile(
-// contentPadding: EdgeInsets.all(4),
-// leading: CircleAvatar(
-// backgroundColor: Colors.yellow,
-// radius: 25,
-// child: Icon(
-// Icons.person,
-// color: Colors.black,
-// ),
-// ),
-// title: Column(
-// mainAxisAlignment: MainAxisAlignment.start,
-// crossAxisAlignment: CrossAxisAlignment.start,
-// children: [
-// Row(
-// children: [
-// SizedBox(
-// width: 4,
-// ),
-// Text(
-// "${data.fname + data.lname}",
-// style: TextStyle(fontSize: 20, color: Colors.white),
-// ),
-// ],
-// ),
-// SizedBox(
-// height: 5,
-// ),
-// Row(
-// mainAxisAlignment: MainAxisAlignment.start,
-// children: <Widget>[
-// Icon(
-// Ionicons.location,
-// color: Colors.white,
-// size: 20,
-// ),
-// SizedBox(
-// width: 2,
-// ),
-// Text(
-// "${data.location}",
-// style: TextStyle(fontSize: 17, color: Colors.white),
-// ),
-// ],
-// ),
-// SizedBox(
-// height: 5,
-// ),
-// Row(
-// children: [
-// SizedBox(
-// width: 4,
-// ),
-// Text(
-// "${data.description}",
-// style: TextStyle(fontSize: 18, color: Colors.white),
-// ),
-// ],
-// ),
-// ],
-// ),
-// trailing: Column(
-// children: [
-// ElevatedButton(
-// style: ElevatedButton.styleFrom(
-//
-// backgroundColor: Colors.green,
-//
-// ),
-// onPressed: () {},
-// child: Icon(Icons.check),
-// ),
-// ElevatedButton(
-// style: ElevatedButton.styleFrom(
-// backgroundColor: Colors.red
-// ),
-// onPressed: () {},
-// child: Icon(Icons.close),
-// )
-// ],
-// )),

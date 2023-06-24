@@ -24,7 +24,6 @@ class FormScreen extends StatefulWidget {
 }
 
 class _FormScreenState extends State<FormScreen> {
-  final _formkey = GlobalKey<FormState>();
   // final TextEditingController _name = TextEditingController();
   // final TextEditingController _pid = TextEditingController();
   // final TextEditingController _location = TextEditingController();

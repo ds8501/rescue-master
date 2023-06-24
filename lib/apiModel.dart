@@ -1,14 +1,22 @@
 import 'dart:convert';
 
-List<ApiCall> apiCallFromJson(String str) =>
-    List<ApiCall>.from(json.decode(str).map((x) => ApiCall.fromJson(x)));
+List<ApiCall> apiCallFromJson(String str) {
+  final decodedJson = json.decode(str);
+  print('Decoded JSON: $decodedJson');
+  final apiCalls = List<ApiCall>.from(decodedJson.map((x) {
+    print('Converting JSON item to ApiCall: $x');
+    return ApiCall.fromJson(x);
+  }));
+  return apiCalls;
+  // List<ApiCall>.from(json.decode(str).map((x) => ApiCall.fromJson(x)));
+}
 
 String apiCallToJson(List<ApiCall> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class ApiCall {
   String id;
-  String memoNo;
+  int memoNo;
   String firstName;
   String lastName;
   int age;
@@ -35,10 +43,10 @@ class ApiCall {
 
   factory ApiCall.fromJson(Map<String, dynamic> json) => ApiCall(
         id: json["id"],
-        memoNo: json["memo_no"],
+        memoNo: json["memo_no"] as int,
         firstName: json["first_name"],
         lastName: json["last_name"],
-        age: json["age"],
+        age: json["age"] as int,
         gender: json["gender"],
         ngoAssigned: json["ngo_assigned"],
         description: json["description"],

@@ -1,5 +1,9 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:rescue/screen/homescreen.dart';
+import 'dart:io';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class FormScreen extends StatefulWidget {
   const FormScreen(
@@ -41,6 +45,24 @@ class _FormScreenState extends State<FormScreen> {
   //   _des.text = des;
   //   super.initState();
   // }
+  late File _image;
+  final imagepicker = ImagePicker();
+
+  Future getImage() async {
+    final image = await imagepicker.getImage(source: ImageSource.camera);
+    setState(() {
+      _image = File(image!.path);
+    });
+  }
+
+  ImagePicker image = ImagePicker();
+  Future getgallary() async {
+    final image = await imagepicker.getImage(source: ImageSource.gallery);
+    setState(() {
+      _image = File(image!.path);
+    });
+  }
+
   Future<bool> _onWillPop() async {
     Navigator.push(context, MaterialPageRoute(builder: (contex) => HomePage()));
     return true;
@@ -95,32 +117,61 @@ class _FormScreenState extends State<FormScreen> {
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           )),
+          floatingActionButton: SpeedDial(
+            icon: Icons.add,
+            activeIcon: Icons.close,
+            backgroundColor:
+                Colors.deepOrangeAccent, //background color of button
+            foregroundColor: Colors.white, //font color, icon color in button
+            activeBackgroundColor: Colors
+                .deepPurpleAccent, //background color when menu is expanded
+            activeForegroundColor: Colors.white,
+            visible: true,
+            closeManually: false,
+            shape: CircleBorder(),
+            children: [
+              SpeedDialChild(
+                child: Icon(Icons.camera_alt),
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                label: 'Click photo',
+                labelStyle: TextStyle(fontSize: 18.0),
+                onTap: getImage,
+              ),
+              SpeedDialChild(
+                child: Icon(Icons.browse_gallery),
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                label: 'pick photo',
+                labelStyle: TextStyle(fontSize: 18.0),
+                onTap: getgallary,
+              )
+            ],
+          ),
           // bottomNavigationBar: Row(
           //   children: [
           //     SizedBox(
-          //       width: MediaQuery.of(context).size.width * 0.03,
+          //       width: MediaQuery.of(context).size.width * 0.2,
           //     ),
-          //     ElevatedButton(
-          //       onPressed: () {},
-          //       child: Text('Reject'),
-          //       style: ButtonStyle(
-          //         backgroundColor: MaterialStateProperty.all(Colors.red),
-          //         //maximumSize: MaterialStateProperty.all(Size(2, 2))
-          //       ),
+          //     FloatingActionButton(
+          //       onPressed: getImage,
+          //       backgroundColor: Colors.blue,
+          //       child: Icon(Icons.camera_alt),
           //     ),
           //     SizedBox(
-          //       width: MediaQuery.of(context).size.width * 0.5,
+          //       width: MediaQuery.of(context).size.width * 0.36,
           //     ),
-          //     ElevatedButton(
-          //       onPressed: () {},
-          //       child: Text('Accept'),
-          //       style: ButtonStyle(
-          //         backgroundColor: MaterialStateProperty.all(Colors.green),
-          //       ),
-          //     )
+          //     FloatingActionButton(
+          //       onPressed: getgallary,
+          //       backgroundColor: Colors.blue,
+          //       child: Icon(Icons.add),
+          //     ),
+          //     SizedBox(
+          //       height: MediaQuery.of(context).size.height * 0.2,
+          //     ),
           //   ],
           // ),
         ));

@@ -4,6 +4,8 @@ import 'package:rescue/apiModel.dart';
 import '../modelhelper.dart';
 import 'form_screen.dart';
 
+bool? theme = false;
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -36,56 +38,80 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  late ThemeMode _thememode = ThemeMode.system;
+
+  void changetheme(theme) {
+    if (theme == true)
+      setState(() {
+        _thememode = ThemeMode.light;
+      });
+    else
+      setState(() {
+        _thememode = ThemeMode.dark;
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.menu,
-              size: 40,
+    return MaterialApp(
+      theme: ThemeData(primarySwatch: Colors.amber),
+      darkTheme: ThemeData.dark(),
+      themeMode: _thememode,
+      home: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              onPressed: () {
+                if (theme == false)
+                  theme = true;
+                else if (theme == true) theme = false;
+
+                changetheme(theme);
+              },
+              icon: Icon(
+                Icons.star,
+                size: 40,
+              ),
             ),
+            backgroundColor: Colors.black,
+            actions: [
+              GestureDetector(
+                onTap: () {},
+                child: Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 10, 10, 10),
+                    child: Stack(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: Colors.yellow,
+                          radius: 25,
+                          child: IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.person,
+                                color: Colors.black,
+                                size: 25,
+                              )),
+                        ),
+                      ],
+                    )),
+              )
+            ],
           ),
-          backgroundColor: Colors.black,
-          actions: [
-            GestureDetector(
-              onTap: () {},
-              child: Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 10, 10, 10),
-                  child: Stack(
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: Colors.yellow,
-                        radius: 25,
-                        child: IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.person,
-                              color: Colors.black,
-                              size: 25,
-                            )),
-                      ),
-                    ],
-                  )),
-            )
-          ],
-        ),
-        body: Visibility(
-          visible: isLoaded,
-          // ignore: sort_child_properties_last
-          child: ListView.builder(
-              itemCount: data?.length,
-              itemBuilder: (BuildContext context, int index) {
-                Text(data![index].firstName);
-                const Text('hello world');
-                return displayCard(data![index]);
-                //}
-              }),
-          replacement: const Center(
-            child: Text('no data byee byee'),
-          ),
-        ));
+          body: Visibility(
+            visible: isLoaded,
+            // ignore: sort_child_properties_last
+            child: ListView.builder(
+                itemCount: data?.length,
+                itemBuilder: (BuildContext context, int index) {
+                  Text(data![index].firstName);
+                  const Text('hello world');
+                  return displayCard(data![index]);
+                  //}
+                }),
+            replacement: const Center(
+              child: Text('no data byee byee'),
+            ),
+          )),
+    );
   }
 
   Widget displayCard(ApiCall data) {

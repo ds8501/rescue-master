@@ -37,7 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   ionicons: ^0.2.2
   mongo_dart: ^0.8.2
-  font_awesome_flutter: 
+  font_awesome_flutter: ^10.4.0 
   fluttertoast:
   http: ^1.0.0
   camera: ^0.10.5+2

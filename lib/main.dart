@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:rescue/logoscreen.dart';
+import 'package:rescue/screen/ngo_screen.dart';
 
 void main() async {
   // WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +21,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: logo_Screen(),
+      home: ngo_page(),
     );
   }
 }

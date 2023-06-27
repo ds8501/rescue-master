@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:rescue/apiModel.dart';
+import '../details.dart';
 import '../modelhelper.dart';
 import 'form_screen.dart';
+import 'package:fluttericon/rpg_awesome_icons.dart';
 
 bool? theme = false;
 
@@ -14,29 +16,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<ApiCall>? data;
-  var isLoaded = false;
-
   @override
   void initState() {
     super.initState();
     getData();
   }
 
-  getData() async {
-    // print('calling function');
-    List<ApiCall>? responseData = await baseclient().get();
-    print('hello');
-    if (responseData != null) {
-      setState(() {
-        data = responseData;
-        print('HIIIIII');
-        isLoaded = true;
-      });
-    } else {
-      print('hiiiiiiii');
-    }
-  }
+  // getData() async {
+  //   // print('calling function');
+  //   List<ApiCall>? responseData = await baseclient().get();
+  //   print('hello');
+  //   if (responseData != null) {
+  //     setState(() {
+  //       data = responseData;
+  //       abc = data![0].firstName;
+  //       print(abc);
+  //       print('HIIIIII');
+  //       isLoaded = true;
+  //     });
+  //   } else {
+  //     print('hiiiiiiii');
+  //   }
+  // }
 
   late ThemeMode _thememode = ThemeMode.system;
 
@@ -54,23 +55,29 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.amber),
-      darkTheme: ThemeData.dark(),
-      themeMode: _thememode,
-      home: Scaffold(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(primarySwatch: Colors.amber),
+        darkTheme: ThemeData.dark(),
+        themeMode: _thememode,
+        home: Scaffold(
           appBar: AppBar(
-            leading: IconButton(
-              onPressed: () {
-                if (theme == false)
-                  theme = true;
-                else if (theme == true) theme = false;
+            leading: GestureDetector(
+              onTap: () {},
+              child: PopupMenuButton(
+                  icon: Icon(RpgAwesome.moon_sun),
+                  itemBuilder: (context) => [
+                        PopupMenuItem(
+                            child: TextButton(
+                          child: Text('change theme'),
+                          onPressed: () {
+                            if (theme == false)
+                              theme = true;
+                            else if (theme == true) theme = false;
 
-                changetheme(theme);
-              },
-              icon: Icon(
-                Icons.star,
-                size: 40,
-              ),
+                            changetheme(theme);
+                          },
+                        ))
+                      ]),
             ),
             backgroundColor: Colors.black,
             actions: [
@@ -103,18 +110,55 @@ class _HomePageState extends State<HomePage> {
                 itemCount: data?.length,
                 itemBuilder: (BuildContext context, int index) {
                   Text(data![index].firstName);
-                  const Text('hello world');
-                  return displayCard(data![index]);
+                  print('hello world');
+                  return displayCard(data![index], index);
                   //}
                 }),
-            replacement: const Center(
-              child: Text('no data byee byee'),
-            ),
-          )),
+            replacement: Center(child: CircularProgressIndicator()),
+          ),
+        ));
+  }
+
+  confirmselect(index) {
+    AlertDialog(
+      title: const Text('DO YOU WANT TO REJECT'),
+      actions: <Widget>[
+        TextButton(
+          style: TextButton.styleFrom(
+            textStyle: Theme.of(context).textTheme.labelLarge,
+          ),
+          child: const Text('Cancel'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        TextButton(
+          style: TextButton.styleFrom(
+            textStyle: Theme.of(context).textTheme.labelLarge,
+          ),
+          child: const Text('Accept'),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (contex) => FormScreen(index: index
+                      //id: data.id,
+                      // personalid: data.personalid,
+                      // lname: data.lastName,
+                      // fname: data.firstName,
+                      // location: data.pickupLocation,
+                      // imageurl: data.image,
+                      // description: data.description),
+                      ),
+                ));
+            ;
+          },
+        ),
+      ],
     );
   }
 
-  Widget displayCard(ApiCall data) {
+  Widget displayCard(ApiCall data, index) {
     // if (data.ngoAssigned == true) {
     return Container(
       height: 120,
@@ -205,19 +249,7 @@ class _HomePageState extends State<HomePage> {
                       backgroundColor: Colors.green,
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (contex) => FormScreen(
-                              id: data.id,
-                              // personalid: data.personalid,
-                              lname: data.lastName,
-                              fname: data.firstName,
-                              location: data.pickupLocation,
-                              imageurl: data.image,
-                              description: data.description),
-                        ),
-                      );
+                      confirmselect(index);
                     },
                     child: Icon(Icons.check),
                   ),

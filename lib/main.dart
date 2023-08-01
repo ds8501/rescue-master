@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:rescue/logoscreen.dart';
+import 'package:rescue/screen/logoscreen.dart';
 import 'package:rescue/screen/ngo_screen.dart';
 
 void main() async {
